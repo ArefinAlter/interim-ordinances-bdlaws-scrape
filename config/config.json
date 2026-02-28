@@ -1,0 +1,19 @@
+{
+  "base_url": "http://bdlaws.minlaw.gov.bd",
+  "index_url": "http://bdlaws.minlaw.gov.bd/laws-of-bangladesh-chronological-index.html",
+  "chronological_index_url": "http://bdlaws.minlaw.gov.bd/laws-of-bangladesh-chronological-index.html",
+  "use_chronological_index": false,
+  "volume_urls": [
+    "http://bdlaws.minlaw.gov.bd/volume-55.html",
+    "http://bdlaws.minlaw.gov.bd/volume-56.html",
+    "http://bdlaws.minlaw.gov.bd/volume-57.html"
+  ],
+  "start_date": "2024-08-05",
+  "end_date": "2026-12-31",
+  "output_dir": "data/processed",
+  "raw_dir": "data/raw",
+  "full_text_dir": "data/full_text",
+  "user_agent": "bdlaws-ordinance-scraper/0.1 (+local-run)",
+  "request_delay_seconds": 1,
+  "max_pages": 500
+}
