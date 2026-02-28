@@ -72,13 +72,33 @@ def extract_act_links(html: str, base_url: str) -> List[str]:
 
 def extract_full_text_from_act_details(html: str) -> str:
     """Extract plain text of the full ordinance from act-details page.
-    BDLaws structure: section.bg-striped contains div.txt-head + div.txt-details with ordinance content."""
+    BDLaws structure:
+    - section.bg-act-section h3: ordinance/act name
+    - div.act-role-style + div.pad-right: ceremonial/preamble (যেহেতু, সেহেতু)
+    - section.bg-striped: div.txt-head + div.txt-details with main sections"""
     soup = BeautifulSoup(html, "lxml")
     for skip in soup.find_all(["script", "style", "nav", "header", "footer"]):
         skip.decompose()
+    parts = []
+    act_section = soup.find("section", class_="bg-act-section")
+    if act_section:
+        h3 = act_section.find("h3")
+        if h3 and h3.get_text(strip=True):
+            parts.append(h3.get_text(separator=" ", strip=True))
+    act_role = soup.find("div", class_="act-role-style")
+    if act_role:
+        parts.append(act_role.get_text(separator=" ", strip=True))
+    pad_right = soup.find("div", class_="pad-right")
+    if pad_right:
+        paras = []
+        for p in pad_right.find_all("p"):
+            paras.append(p.get_text(separator=" ", strip=True))
+        if paras:
+            parts.append("\n\n".join(paras))
+        else:
+            parts.append(pad_right.get_text(separator=" ", strip=True))
     section = soup.find("section", class_="bg-striped")
     if section:
-        parts = []
         for row in section.find_all("div", class_="row"):
             txt_details = row.find("div", class_="txt-details")
             if txt_details:
@@ -86,8 +106,8 @@ def extract_full_text_from_act_details(html: str) -> str:
             txt_head = row.find("div", class_="txt-head")
             if txt_head and txt_details is None:
                 parts.append(txt_head.get_text(separator="\n", strip=True))
-        if parts:
-            return "\n\n".join(parts)
+    if parts:
+        return "\n\n".join(parts)
     all_txt = soup.find_all("div", class_="txt-details")
     if all_txt:
         return "\n\n".join(d.get_text(separator="\n", strip=True) for d in all_txt)
